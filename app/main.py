@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from app.api.router import api_router
 
 app = FastAPI(
     title="DevPilot Core API",
@@ -6,9 +7,5 @@ app = FastAPI(
     description="Backend for the DevPilot developer productivity platform.",
 )
 
-
-@app.get("/", tags=["Health"])
-def health_check():
-    return {
-        "message": "Welcome to DevPilot Core"
-    }
+# Include all routes defined in your single router file
+app.include_router(api_router)
