@@ -8,5 +8,14 @@ app = FastAPI(
     description=settings.description,
 )
 
+@app.get("/", tags=["Root"])
+async def root():
+    return {
+        "environment": settings.environment,
+        "status": "running",
+        "service": settings.app_name,
+        "version": settings.app_version
+    }
+
 # Include all routes defined in your single router file
 app.include_router(api_router)
