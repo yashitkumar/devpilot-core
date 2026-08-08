@@ -1,6 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from app.api.router import api_router
 from app.core.config import settings
+from app.modules.users.exceptions import UserAlreadyExistsError
 
 app = FastAPI(
     title=settings.app_name,
@@ -16,6 +18,13 @@ async def root():
         "service": settings.app_name,
         "version": settings.app_version
     }
+
+@app.exception_handler(UserAlreadyExistsError)
+async def user_already_exists_handler(request:Request, exc: UserAlreadyExistsError):
+    return JSONResponse(
+        status_code=409,
+        content={"detail": str(exc)},
+    )
 
 # Include all routes defined in your single router file
 app.include_router(api_router)
