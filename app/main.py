@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from app.api.router import api_router
 from app.core.config import settings
+from app.modules.auth.exceptions import InvalidCredentialsError, InvalidTokenError
 from app.modules.users.exceptions import UserAlreadyExistsError
 
 app = FastAPI(
@@ -23,6 +24,20 @@ async def root():
 async def user_already_exists_handler(request:Request, exc: UserAlreadyExistsError):
     return JSONResponse(
         status_code=409,
+        content={"detail": str(exc)},
+    )
+
+@app.exception_handler(InvalidCredentialsError)
+async def invalid_credentials_handler(request:Request, exc: InvalidCredentialsError):
+    return JSONResponse(
+        status_code=401,
+        content={"detail": str(exc)},
+    )
+
+@app.exception_handler(InvalidTokenError)
+async def invalid_token_handler(request:Request, exc: InvalidTokenError):
+    return JSONResponse(
+        status_code=401,
         content={"detail": str(exc)},
     )
 

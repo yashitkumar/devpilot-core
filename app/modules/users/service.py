@@ -1,5 +1,5 @@
 
-import bcrypt
+from app.core.security import hash_password
 from app.modules.users.exceptions import UserAlreadyExistsError
 from app.modules.users.repository import UserRepository, user_repository
 from app.modules.users.models import User
@@ -23,15 +23,11 @@ class UserService:
             id=user_id,
             name=user_create.name,
             email=user_create.email,
-            password_hash=self.hash_password(user_create.password),
+            password_hash=hash_password(user_create.password),
             created_at=now,
             updated_at=now,
         )
         return self._repository.create(user)
-
-    def hash_password(self, password: str) -> str:
-            bcrypt_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-            return bcrypt_hash.decode('utf-8')
 
 user_service = UserService(user_repository)        
 
