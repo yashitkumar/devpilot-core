@@ -1,4 +1,4 @@
-from app.modules.users.repository import UserRepository, user_repository
+from app.modules.users.repository import UserRepository
 from app.modules.auth.schemas import LoginRequest
 from app.core.security import verify_password
 from app.modules.users.models import User
@@ -24,5 +24,5 @@ class AuthService:
             "token_type": "bearer"
         }
 
-auth_service = AuthService(user_repository)        
+# auth_service = AuthService(user_repository)        
     

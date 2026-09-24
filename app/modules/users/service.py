@@ -1,7 +1,7 @@
 
 from app.core.security import hash_password
 from app.modules.users.exceptions import UserAlreadyExistsError
-from app.modules.users.repository import UserRepository, user_repository
+from app.modules.users.repository import UserRepository
 from app.modules.users.models import User
 from uuid import uuid4
 from datetime import UTC, datetime
@@ -29,5 +29,5 @@ class UserService:
         )
         return self._repository.create(user)
 
-user_service = UserService(user_repository)        
+# user_service = UserService(user_repository)        
 

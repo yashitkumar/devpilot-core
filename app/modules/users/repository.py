@@ -1,34 +1,43 @@
 from uuid import UUID
 from app.modules.users.models import User
+from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 
 class UserRepository:
 
-    def __init__(self):
-        self._users: dict[UUID, User] = {}
+    def __init__(self, db: Session):
+        # self._users: dict[UUID, User] = {}
+        self._db = db    
 
     def create(self, user: User) -> User:
-        self._users[user.id] = user
+        self._db.add(user)
+        self._db.commit()
+        self._db.refresh(user)
         return user
 
     def get_by_id(self, user_id: UUID) -> User | None:
-        return self._users.get(user_id)
+        return self._db.get(User, user_id)
 
     def get_by_email(self, email: str) -> User | None:  
-        for user in self._users.values():
-            if user.email == email:
-                return user
-        return None
+        statement = select(User).where(User.email == email)
+        return self._db.scalars(statement).first()
 
     def get_all(self) -> list[User]:
-       return list(self._users.values())
+       statement = select(User)
+       return list(self._db.scalars(statement).all())
 
     def delete(self, user_id: UUID) -> bool:
-        if user_id in self._users:
-            del self._users[user_id]
-            return True
-        return False    
+        user = self._db.get(User, user_id)
 
-user_repository = UserRepository()      
+        if not user:
+            return False
+
+        self._db.delete(user)
+        self._db.commit()
+
+        return True 
+
+# user_repository = UserRepository()      
 
  

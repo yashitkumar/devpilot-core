@@ -3,12 +3,16 @@ from fastapi import Depends
 from app.core.dependencies import get_current_user
 from app.modules.users.models import User
 from app.modules.users.schemas import UserCreate, UserResponse
-from app.modules.users.service import user_service
+from app.modules.users.service import UserService
+from app.modules.users.dependencies import get_user_service
 
 router = APIRouter()
 
 @router.post("/users", response_model=UserResponse)
-async def create_user(user: UserCreate):
+async def create_user(
+    user: UserCreate,
+    user_service: UserService = Depends(get_user_service)
+):
     return user_service.create_user(user)
 
 @router.get("/users/me", response_model=UserResponse)
