@@ -3,6 +3,7 @@ from uuid import UUID
 from app.modules.projects.models import Project
 from app.modules.projects.repository import ProjectRepository
 from app.modules.projects.schemas import ProjectCreate
+from app.modules.projects.exceptions import ProjectAccessDeniedError,ProjectNotFoundError
 
 
 class ProjectService:
@@ -31,10 +32,10 @@ class ProjectService:
         project = self._repository.get_by_id(project_id)
 
         if project is None:
-            raise ValueError("Project not found")
+            raise ProjectNotFoundError("Project not found")
 
         if project.owner_id != owner_id:
-            raise PermissionError("You do not have access to this project")
+            raise ProjectAccessDeniedError("You do not have access to this project")
 
         return project
 
@@ -52,9 +53,9 @@ class ProjectService:
         project = self._repository.get_by_id(project_id)
 
         if project is None:
-            raise ValueError("Project not found")
+            raise ProjectNotFoundError("Project not found")
 
         if project.owner_id != owner_id:
-            raise PermissionError("You do not have access to this project")
+            raise ProjectAccessDeniedError("You do not have access to this project")
 
         self._repository.delete(project)

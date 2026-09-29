@@ -1,3 +1,5 @@
+from app.modules.projects.exceptions import ProjectAccessDeniedError
+from app.modules.projects.exceptions import ProjectNotFoundError
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from app.api.router import api_router
@@ -40,6 +42,21 @@ async def invalid_token_handler(request:Request, exc: InvalidTokenError):
         status_code=401,
         content={"detail": str(exc)},
     )
+
+@app.exception_handler(ProjectNotFoundError)
+async def project_not_found_handler(request, exc):
+    return JSONResponse(
+        status_code=404,
+        content={"detail": str(exc)},
+    )
+
+
+@app.exception_handler(ProjectAccessDeniedError)
+async def project_access_denied_handler(request, exc):
+    return JSONResponse(
+        status_code=403,
+        content={"detail": str(exc)},
+    )    
 
 # Include all routes defined in your single router file
 app.include_router(api_router)
