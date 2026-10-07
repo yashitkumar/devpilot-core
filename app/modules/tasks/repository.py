@@ -1,3 +1,5 @@
+from app.modules.tasks.models import TaskPriority
+from app.modules.tasks.models import TaskStatus
 from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -21,11 +23,29 @@ class TaskRepository:
 
         return self._db.scalar(statement)
 
-    def get_by_project(self, project_id: UUID) -> list[Task]:
+    def get_by_project(
+        self,
+        project_id: UUID,
+        status: TaskStatus | None = None,
+        priority: TaskPriority | None = None,
+        offset: int = 0,
+        limit: int = 20,
+    ) -> list[Task]:
+        statement = select(Task).where(
+            Task.project_id == project_id
+        )
+
+        if status is not None:
+            statement = statement.where(Task.status == status)
+
+        if priority is not None:
+            statement = statement.where(Task.priority == priority)
+
         statement = (
-            select(Task)
-            .where(Task.project_id == project_id)
+            statement
             .order_by(Task.created_at.desc())
+            .offset(offset)
+            .limit(limit)
         )
 
         return list(self._db.scalars(statement).all())

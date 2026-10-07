@@ -6,6 +6,17 @@ from sqlalchemy import DateTime, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
+from enum import Enum
+
+class TaskStatus(str, Enum):
+    TODO = "TODO"
+    IN_PROGRESS = "IN_PROGRESS"
+    DONE = "DONE"
+
+class TaskPriority(str, Enum):
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
 
 
 class Task(Base):
@@ -31,16 +42,16 @@ class Task(Base):
         nullable=False
         )
 
-    status: Mapped[str] = mapped_column(
+    status: Mapped[TaskStatus] = mapped_column(
         String(20),
         nullable=False,
-        default="TODO",
+        default=TaskStatus.TODO,
     )
 
-    priority: Mapped[str] = mapped_column(
+    priority: Mapped[TaskPriority] = mapped_column(
         String(20),
         nullable=False,
-        default="MEDIUM",
+        default=TaskPriority.MEDIUM,
     )    
 
     created_at: Mapped[datetime] = mapped_column(

@@ -33,4 +33,28 @@ def get_tasks(
     return task_service.get_tasks(
         project_id=project_id,
         owner_id=current_user.id,
-    )    
+    )
+
+@router.get("/{task_id}", response_model=TaskResponse)
+def get_task(
+    project_id: UUID,
+    task_id: UUID,
+    current_user: User = Depends(get_current_user),
+    task_service: TaskService = Depends(get_task_service),
+):
+    return task_service.get_task(
+        task_id=task_id,
+        owner_id=current_user.id,
+    )
+
+@router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_task(
+    project_id: UUID,
+    task_id: UUID,
+    current_user: User = Depends(get_current_user),
+    task_service: TaskService = Depends(get_task_service),
+):
+    task_service.delete_task(
+        task_id=task_id,
+        owner_id=current_user.id,
+    )            

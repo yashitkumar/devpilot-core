@@ -1,3 +1,5 @@
+from app.modules.tasks.models import TaskPriority
+from app.modules.tasks.models import TaskStatus
 from datetime import datetime
 from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
@@ -11,8 +13,8 @@ class TaskResponse(BaseModel):
     title: str
     description: str
     project_id: UUID
-    status: str
-    priority: str
+    status: TaskStatus
+    priority: TaskPriority
     created_at: datetime
     updated_at: datetime
 
